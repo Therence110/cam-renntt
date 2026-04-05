@@ -1,0 +1,269 @@
+body {
+    background: #FFF8F0; 
+    font-family: 'Courier New', Courier, monospace; 
+}
+
+.container {
+    width: 900px;
+    margin: auto;
+    border: 4px solid #708238; 
+    background: #FFF8F0; 
+}
+
+header {
+    background: #708238;
+    color: #FFF8F0; 
+    text-align: center;
+    padding: 20px;
+    border-bottom: 4px solid #C21807; 
+}
+.sidebar {
+    width: 200px;
+    float: left;
+    border-right: 4px solid #C21807; 
+    height: 500px;
+    background: #F6E7A0; 
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 20px;
+}
+
+.sidebar li {
+    padding: 10px;
+    border-bottom: 2px solid #708238; 
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background: #C21807; 
+    color: #FFF8F0; 
+}
+
+.sidebar a {
+    color: #708238; 
+    text-decoration: none;
+    display: block;
+    padding: 10px 0;
+}
+
+.sidebar a:hover {
+    background: #C21807; 
+    color: #FFF8F0; 
+}
+
+main {
+    margin-left: 200px;
+    padding: 20px;
+}
+
+#cart {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 1px solid #708238; 
+    background: #FFF8F0; 
+    border-radius: 8px;
+}
+
+#cart-items li {
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#cart-items button {
+    background: #C21807; 
+    color: #FFF8F0; 
+    border: none;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#cart-items button:hover {
+    background: #9B1205; 
+}
+
+.featured {
+    text-align: center;
+    border-bottom: 3px solid #708238; 
+    padding-bottom: 20px;
+}
+
+.featured img {
+    width: 250px;
+    transition: 0.3s;
+}
+
+.featured img:hover {
+    transform: scale(1.05);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.card {
+    border: 2px solid #708238; 
+    padding: 10px;
+    text-align: center;
+    transition: 0.3s;
+    background: #F6E7A0; 
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    background: #C21807; 
+    color: #FFF8F0; 
+}
+
+.card img {
+    width: 100%;
+    transition: 0.3s;
+}
+
+.card img:hover {
+    transform: scale(1.05);
+}
+
+button {
+    background: #708238; 
+    color: #FFF8F0; 
+    border: none;
+    padding: 7px 15px;
+    margin-top: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #C21807; 
+    color: #FFF8F0; 
+}
+
+footer {
+    clear: both;
+    border-top: 4px solid #C21807; 
+    text-align: center;
+    padding: 10px;
+    background: #708238; 
+    color: #FFF8F0; 
+}
+ #booking-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        #booking-overlay.active {
+            display: flex;
+        }
+        #booking-page {
+            background: #fff;
+            border-radius: 10px;
+            max-width: 480px;
+            width: 90%;
+            padding: 2rem;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(40px); opacity: 0; }
+            to   { transform: translateY(0);   opacity: 1; }
+        }
+        #booking-page h2 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+        #booking-page .price-tag { color: #888; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        #booking-page label {
+            display: block;
+            font-size: 0.85rem;
+            color: #555;
+            margin-bottom: 0.3rem;
+            margin-top: 1rem;
+        }
+        #booking-page input[type=number],
+        #booking-page input[type=date] {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1.5px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        #booking-page input[type=number]:focus,
+        #booking-page input[type=date]:focus {
+            border-color: #d4a853;
+        }
+        .cost-summary {
+            background: #f5f0e8;
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            margin-top: 1.25rem;
+        }
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            padding: 0.2rem 0;
+        }
+        .cost-row.total {
+            font-weight: bold;
+            font-size: 1.05rem;
+            border-top: 1px solid #ccc;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+        }
+        .booking-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .btn-confirm {
+            flex: 1;
+            padding: 0.7rem;
+            background: #1a1a1a;
+            color: #f5f0e8;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-confirm:hover { background: #d4a853; color: #1a1a1a; }
+        .btn-cancel {
+            flex: 1;
+            padding: 0.7rem;
+            background: #fff;
+            color: #555;
+            border: 1.5px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover { border-color: #999; color: #222; }
+        .close-btn {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #888;
+            line-height: 1;
+        }
+        .close-btn:hover { color: #222; }
+        .success-msg { display: none; text-align: center; padding: 1rem 0; }
+        .success-msg .check { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .success-msg p { color: #555; font-size: 0.95rem; }
+    

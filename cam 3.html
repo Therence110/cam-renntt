@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CamRent – Rent Cameras</title>
+    <link rel="stylesheet" href="cam.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Georgia, serif; background: #f5f0e8; color: #2a2a2a; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
+
+        header { background: #1a1a1a; color: #f5f0e8; text-align: center; padding: 2rem 1rem; }
+        header h1 { font-size: 2.5rem; letter-spacing: 0.1em; }
+        header p  { font-size: 1rem; color: #aaa; margin-top: 0.4rem; }
+
+        nav { background: #2a2a2a; padding: 0.75rem 1rem; }
+        nav ul { list-style: none; display: flex; gap: 1.5rem; flex-wrap: wrap; }
+        nav ul li a { color: #f5f0e8; text-decoration: none; font-size: 0.9rem; }
+        nav ul li a:hover { color: #d4a853; }
+
+        main { padding: 2rem 0; }
+        .section { margin-bottom: 3rem; }
+        .section h2 { font-size: 1.6rem; margin-bottom: 1rem; border-bottom: 2px solid #1a1a1a; padding-bottom: 0.5rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+        .card { background: #fff; border: 1px solid #ddd; border-radius: 6px; overflow: hidden; text-align: center; }
+        .card img { width: 100%; height: 160px; object-fit: cover; background: #eee; }
+        .card p { padding: 0.75rem 1rem 0.5rem; font-size: 0.95rem; }
+        .card button { margin: 0 1rem 1rem; padding: 0.5rem 1.2rem; background: #1a1a1a; color: #f5f0e8; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9rem; }
+        .card button:hover { background: #d4a853; color: #1a1a1a; }
+
+        footer { background: #1a1a1a; color: #aaa; text-align: center; padding: 1.5rem; font-size: 0.85rem; margin-top: 2rem; }
+
+               #overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        #overlay.active { display: flex; }
+
+        .panel {
+            background: #fff;
+            border-radius: 10px;
+            max-width: 480px;
+            width: 92%;
+            padding: 2rem;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute; top: 1rem; right: 1rem;
+            background: none; border: none;
+            font-size: 1.4rem; cursor: pointer; color: #888;
+        }
+        .close-btn:hover { color: #222; }
+
+        .panel h2 { font-size: 1.3rem; margin-bottom: 0.2rem; }
+        .panel .sub { color: #888; font-size: 0.88rem; margin-bottom: 1.2rem; }
+
+        .panel label {
+            display: block; font-size: 0.85rem;
+            color: #555; margin: 0.9rem 0 0.3rem;
+        }
+        .panel input[type=number],
+        .panel input[type=date],
+        .panel input[type=text],
+        .panel input[type=email],
+        .panel input[type=tel] {
+            width: 100%; padding: 0.6rem 0.8rem;
+            border: 1.5px solid #ddd; border-radius: 5px;
+            font-size: 1rem; outline: none;
+            font-family: Georgia, serif;
+        }
+        .panel input:focus { border-color: #d4a853; }
+
+        .cost-box {
+            background: #f5f0e8; border-radius: 6px;
+            padding: 0.9rem 1.1rem; margin-top: 1.2rem; font-size: 0.9rem;
+        }
+        .cost-row { display: flex; justify-content: space-between; padding: 0.2rem 0; }
+        .cost-row.total {
+            font-weight: bold; font-size: 1rem;
+            border-top: 1px solid #ccc; margin-top: 0.5rem; padding-top: 0.5rem;
+        }
+
+        .divider { border: none; border-top: 1.5px solid #eee; margin: 1.4rem 0; }
+
+        .info-section h3 { font-size: 1.05rem; margin-bottom: 0.2rem; }
+        .info-section p  { font-size: 0.83rem; color: #888; }
+
+        .actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+        .btn-back {
+            flex: 1; padding: 0.7rem; background: #fff; color: #555;
+            border: 1.5px solid #ddd; border-radius: 5px;
+            font-size: 0.95rem; cursor: pointer;
+        }
+        .btn-back:hover { border-color: #999; color: #222; }
+        .btn-primary {
+            flex: 2; padding: 0.7rem; background: #1a1a1a; color: #f5f0e8;
+            border: none; border-radius: 5px;
+            font-size: 0.95rem; cursor: pointer;
+        }
+        .btn-primary:hover { background: #d4a853; color: #1a1a1a; }
+
+        /* success screen */
+        #success-screen { display: none; text-align: center; padding: 1rem 0; }
+        #success-screen .checkmark { font-size: 3rem; margin-bottom: 0.5rem; }
+        #success-screen h2 { margin-bottom: 0.5rem; }
+        #success-screen p { color: #666; font-size: 0.92rem; line-height: 1.6; }
+        #success-screen button {
+            margin-top: 1.5rem; padding: 0.7rem 2rem;
+            background: #1a1a1a; color: #f5f0e8;
+            border: none; border-radius: 5px;
+            font-size: 0.95rem; cursor: pointer;
+        }
+        #success-screen button:hover { background: #d4a853; color: #1a1a1a; }
+
+        /* step indicator */
+        .steps {
+            display: flex; align-items: center;
+            gap: 0.5rem; margin-bottom: 1.4rem; font-size: 0.82rem;
+        }
+        .step { color: #bbb; }
+        .step.active { color: #1a1a1a; font-weight: bold; }
+        .step-arrow { color: #ccc; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>RetroFilm Co.</h1>
+    <p>Rent the Best Cameras for Your Projects</p>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#rentals">Rent Cameras</a></li>
+        <li><a href="#lenses">Lenses</a></li>
+        <li><a href="#packages">Packages</a></li>
+        <li><a href="#contact">Contact</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+<main>
+
+    <section id="home" class="section">
+        <h2>Welcome to CamRent</h2>
+        <p>We provide the best Film Cameras and photography gear for your creative projects. Scroll down to explore our rentals!</p>
+        <img src="banner.jpg" alt="Camera Banner" style="width:100%;margin-top:1rem;border-radius:6px;">
+    </section>
+
+    <section id="rentals" class="section">
+        <h2>Available Cameras</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="fuji.png" alt="Fujifilm finepix x100">
+                <p>Fujifilm finepix x100 – $50/day</p>
+                <button onclick="openStep1('Fujifilm finepix x100', 50)">Book Now</button>
+            </div>
+            <div class="card">
+                <img src="ff.jpg" alt="Fujifilm Instax Mini Evo 12">
+                <p>Fujifilm Instax Mini Evo 12 – $30/day</p>
+                <button onclick="openStep1('Fujifilm Instax Mini Evo 12', 30)">Book Now</button>
+            </div>
+            <div class="card">
+                <img src="sony.png" alt="Sony A7 III">
+                <p>Sony A7 III – $45/day</p>
+                <button onclick="openStep1('Sony A7 III', 45)">Book Now</button>
+            </div>
+            <div class="card">
+                <img src="t4.png" alt="Fujifilm X-T4">
+                <p>Fujifilm X-T4 – $40/day</p>
+                <button onclick="openStep1('Fujifilm X-T4', 40)">Book Now</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="lenses" class="section">
+        <h2>Lenses for Rent</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="lens.png" alt="50mm Lens">
+                <p>50mm Lens – $10/day</p>
+                <button onclick="openStep1('50mm Lens', 10)">Book Now</button>
+            </div>
+            <div class="card">
+                <img src="wide.png" alt="Wide Angle Lens">
+                <p>Wide Angle Lens – $15/day</p>
+                <button onclick="openStep1('Wide Angle Lens', 15)">Book Now</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="packages" class="section">
+        <h2>Photography Packages</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="canon.png" alt="Basic Package">
+                <p>Basic Package – Camera + Lens – $60/day</p>
+                <button onclick="openStep1('Basic Package', 60)">Book Now</button>
+            </div>
+            <div class="card">
+                <img src="film.png" alt="Pro Package">
+                <p>Pro Package – Instax Camera + Film – $80/day</p>
+                <button onclick="openStep1('Pro Package', 80)">Book Now</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section">
+        <h2>Contact Us</h2>
+        <p>Email: info@RetroFilmCo.com</p>
+        <p>Phone: +676 767 676</p>
+    </section>
+
+</main>
+</div>
+
+<footer>
+    <p>© 2026 CamRent – All Rights Reserved</p>
+</footer>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  OVERLAY                                   -->
+<!-- ══════════════════════════════════════════ -->
+<div id="overlay">
+  <div class="panel">
+    <button class="close-btn" onclick="closeOverlay()">&#x2715;</button>
+
+    <!-- ── STEP 1 : Rental Details ── -->
+    <div id="step1">
+      <div class="steps">
+        <span class="step active">1. Rental details</span>
+        <span class="step-arrow">›</span>
+        <span class="step">2. Your information</span>
+        <span class="step-arrow">›</span>
+        <span class="step">3. Confirm</span>
+      </div>
+
+      <h2 id="s1-title">Item Name</h2>
+      <p class="sub" id="s1-rate">$0 / day</p>
+
+      <label for="rental-days">Number of Rental Days</label>
+      <input type="number" id="rental-days" min="1" max="30" value="1" oninput="updateCost()">
+
+      <label for="start-date">Start Date</label>
+      <input type="date" id="start-date" oninput="updateCost()">
+
+      <div class="cost-box">
+        <div class="cost-row"><span>Rate</span><span id="rate-out">$0/day</span></div>
+        <div class="cost-row"><span>Days</span><span id="days-out">1 day</span></div>
+        <div class="cost-row"><span>Return Date</span><span id="return-out">—</span></div>
+        <div class="cost-row total"><span>Total</span><span id="total-out">$0</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back" onclick="closeOverlay()">Cancel</button>
+        <button class="btn-primary" onclick="goToStep2()">Next: Your Info →</button>
+      </div>
+    </div>
+
+        <div id="step2" style="display:none;">
+      <div class="steps">
+        <span class="step">1. Rental details</span>
+        <span class="step-arrow">›</span>
+        <span class="step active">2. Your information</span>
+        <span class="step-arrow">›</span>
+        <span class="step">3. Confirm</span>
+      </div>
+
+      <h2>Your Information</h2>
+      <p class="sub">Please fill in your details so we can confirm your rental.</p>
+
+      <label for="cust-name">Full Name</label>
+      <input type="text" id="cust-name" placeholder="e.g. Juan dela Cruz">
+
+      <label for="cust-email">Email Address</label>
+      <input type="email" id="cust-email" placeholder="e.g. juan@email.com">
+
+      <label for="cust-phone">Phone Number</label>
+      <input type="tel" id="cust-phone" placeholder="e.g. +63 912 345 6789">
+
+      <label for="cust-address">Pickup / Delivery Address</label>
+      <input type="text" id="cust-address" placeholder="e.g. 123 Katipunan Ave, QC">
+
+      <div class="actions">
+        <button class="btn-back" onclick="goBack()">← Back</button>
+        <button class="btn-primary" onclick="goToStep3()">Review Booking →</button>
+      </div>
+    </div>
+
+        <div id="step3" style="display:none;">
+      <div class="steps">
+        <span class="step">1. Rental details</span>
+        <span class="step-arrow">›</span>
+        <span class="step">2. Your information</span>
+        <span class="step-arrow">›</span>
+        <span class="step active">3. Confirm</span>
+      </div>
+
+      <h2>Review Your Booking</h2>
+      <p class="sub">Please check everything before confirming.</p>
+
+      <div class="cost-box" style="margin-top:1rem;">
+        <div class="cost-row"><span>Item</span><span id="rev-item">—</span></div>
+        <div class="cost-row"><span>Days</span><span id="rev-days">—</span></div>
+        <div class="cost-row"><span>Start Date</span><span id="rev-start">—</span></div>
+        <div class="cost-row"><span>Return Date</span><span id="rev-return">—</span></div>
+        <div class="cost-row total"><span>Total</span><span id="rev-total">—</span></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="info-section">
+        <h3>Customer Details</h3>
+        <p id="rev-name">—</p>
+        <p id="rev-email">—</p>
+        <p id="rev-phone">—</p>
+        <p id="rev-address">—</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn-back" onclick="backToStep2()">← Edit</button>
+        <button class="btn-primary" onclick="confirmBooking()">✓ Confirm Booking</button>
+      </div>
+    </div>
+
+        <div id="success-screen">
+      <div class="checkmark">✓</div>
+      <h2>Booking Confirmed!</h2>
+      <p id="success-msg">Thank you! We will contact you shortly to finalize your rental.</p>
+      <button onclick="closeOverlay()">Back to Home</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let itemName = '';
+  let itemRate = 0;
+
+  function openStep1(name, rate) {
+    itemName = name;
+    itemRate = rate;
+    document.getElementById('s1-title').textContent = name;
+    document.getElementById('s1-rate').textContent = '$' + rate + ' / day';
+    document.getElementById('rental-days').value = 1;
+    document.getElementById('start-date').value = new Date().toISOString().split('T')[0];
+    updateCost();
+    showOnly('step1');
+    document.getElementById('overlay').classList.add('active');
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').classList.remove('active');
+  }
+
+  function updateCost() {
+    const days = parseInt(document.getElementById('rental-days').value) || 1;
+    const total = days * itemRate;
+    document.getElementById('rate-out').textContent = '$' + itemRate + '/day';
+    document.getElementById('days-out').textContent = days + (days === 1 ? ' day' : ' days');
+    document.getElementById('total-out').textContent = '$' + total;
+    const startVal = document.getElementById('start-date').value;
+    if (startVal) {
+      const d = new Date(startVal);
+      d.setDate(d.getDate() + days);
+      document.getElementById('return-out').textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } else {
+      document.getElementById('return-out').textContent = '—';
+    }
+  }
+
+  function goToStep2() {
+    const days = parseInt(document.getElementById('rental-days').value) || 1;
+    const startVal = document.getElementById('start-date').value;
+    if (!startVal) { alert('Please pick a start date.'); return; }
+    if (days < 1)  { alert('Please enter at least 1 day.');  return; }
+    showOnly('step2');
+  }
+
+  function goBack() { showOnly('step1'); }
+  function backToStep2() { showOnly('step2'); }
+
+  function goToStep3() {
+    const name    = document.getElementById('cust-name').value.trim();
+    const email   = document.getElementById('cust-email').value.trim();
+    const phone   = document.getElementById('cust-phone').value.trim();
+    const address = document.getElementById('cust-address').value.trim();
+
+    if (!name)    { alert('Please enter your full name.');    return; }
+    if (!email)   { alert('Please enter your email address.'); return; }
+    if (!phone)   { alert('Please enter your phone number.');  return; }
+    if (!address) { alert('Please enter your address.');       return; }
+
+    const days     = parseInt(document.getElementById('rental-days').value) || 1;
+    const startVal = document.getElementById('start-date').value;
+    const total    = days * itemRate;
+    const d        = new Date(startVal);
+    d.setDate(d.getDate() + days);
+    const returnStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const startStr  = new Date(startVal).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    document.getElementById('rev-item').textContent    = itemName;
+    document.getElementById('rev-days').textContent    = days + (days === 1 ? ' day' : ' days');
+    document.getElementById('rev-start').textContent   = startStr;
+    document.getElementById('rev-return').textContent  = returnStr;
+    document.getElementById('rev-total').textContent   = '$' + total;
+    document.getElementById('rev-name').textContent    = name;
+    document.getElementById('rev-email').textContent   = email;
+    document.getElementById('rev-phone').textContent   = phone;
+    document.getElementById('rev-address').textContent = address;
+
+    showOnly('step3');
+  }
+
+  function confirmBooking() {
+    const name  = document.getElementById('cust-name').value.trim();
+    const days  = parseInt(document.getElementById('rental-days').value) || 1;
+    const total = days * itemRate;
+    document.getElementById('success-msg').textContent =
+      'Hi ' + name + '! Your booking for the ' + itemName +
+      ' (' + days + (days===1?' day':' days') + ', $' + total + ' total) has been received. We will contact you shortly!';
+    showOnly('success-screen');
+  }
+
+  function showOnly(id) {
+    ['step1','step2','step3','success-screen'].forEach(function(s) {
+      document.getElementById(s).style.display = (s === id) ? '' : 'none';
+    });
+  }
+
+  document.getElementById('overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeOverlay();
+  });
+</script>
+
+</body>
+</html>
